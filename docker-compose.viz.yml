@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  # Override simulator for native visualization - don't expose port 8081
+  simulator:
+    command: ["./cpp_simulator/build/simulator", "./config/test_scenarios/viz_continuous.json"]
+    ports:
+      - "8080:8080/udp"
+      - "8090:8081/udp"  # Map container port 8081 to host port 8090
+    # Remove the 8081:8081 mapping to avoid conflicts

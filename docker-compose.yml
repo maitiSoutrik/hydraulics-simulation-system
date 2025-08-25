@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  # C++ Hydraulics Simulator
+  simulator:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: hydraulics-simulator
+    command: ["./cpp_simulator/build/simulator", "./config/test_scenarios/fill_cycle.json"]
+    ports:
+      - "8080:8080/udp"
+      - "8081:8081/udp"
+    networks:
+      - hydraulics-net
+    healthcheck:
+      test: ["CMD", "sh", "-c", "ss -ul | grep 8080 || netstat -ul | grep 8080 || exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # Python Test Runner
+  test-runner:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: hydraulics-tests
+    command: ["python3", "-m", "pytest", "python_client/tests/", "-v", "--tb=short"]
+    depends_on:
+      simulator:
+        condition: service_healthy
+    networks:
+      - hydraulics-net
+    volumes:
+      - ./test-results:/app/test-results
+    environment:
+      - PYTHONPATH=/app/python_client
+
+  # Python Visualizer (requires X11 forwarding for GUI)
+  visualizer:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: hydraulics-visualizer
+    command: ["python3", "python_client/visualizer/main.py", "--host", "simulator"]
+    depends_on:
+      - simulator
+    networks:
+      - hydraulics-net
+    environment:
+      - DISPLAY=${DISPLAY}
+      - PYTHONPATH=/app/python_client
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    stdin_open: true
+    tty: true
+
+  # Relief Valve Test Scenario
+  simulator-relief:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: hydraulics-simulator-relief
+    command: ["./cpp_simulator/build/simulator", "./config/test_scenarios/relief_valve_test.json"]
+    ports:
+      - "8082:8080/udp"
+      - "8083:8081/udp"
+    networks:
+      - hydraulics-net
+    profiles:
+      - relief-test
+
+  # Relief Valve Test Runner
+  test-runner-relief:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: hydraulics-tests-relief
+    command: ["python3", "-m", "pytest", "python_client/tests/test_relief_valve.py", "-v", "--tb=short"]
+    depends_on:
+      - simulator-relief
+    networks:
+      - hydraulics-net
+    volumes:
+      - ./test-results:/app/test-results
+    environment:
+      - PYTHONPATH=/app/python_client
+    profiles:
+      - relief-test
+
+networks:
+  hydraulics-net:
+    driver: bridge
+
+volumes:
+  test-results:
