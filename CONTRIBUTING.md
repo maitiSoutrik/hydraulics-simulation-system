@@ -127,7 +127,7 @@ cd cpp_simulator/build && ./simulator_tests
 
 Use conventional commit format:
 
-```
+```text
 type(scope): description
 
 [optional body]

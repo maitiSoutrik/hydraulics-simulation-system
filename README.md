@@ -1,13 +1,14 @@
 # Hydraulics Simulation System
 
-[![CI/CD Pipeline](https://github.com/maitiSoutrik/hydraulics-simulation-system/actions/workflows/ci.yml/badge.svg)](https://github.com/maitiSoutrik/hydraulics-simulation-system/actions/workflows/ci.yml)
+<!-- CI badge will be enabled once workflow is added -->
+<!-- [![CI/CD Pipeline](https://github.com/maitiSoutrik/hydraulics-simulation-system/actions/workflows/ci.yml/badge.svg)](https://github.com/maitiSoutrik/hydraulics-simulation-system/actions/workflows/ci.yml) -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A real-time hydraulics system simulator designed for **Software-in-the-Loop (SIL)** testing of embedded control systems. Built with modern C++17, this simulator models hydraulic circuits with accumulators, cylinders, fill valves, drain valves, and pressure relief valves.
 
 ## Architecture Overview
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────┐
 │                     Hydraulics Simulation System                     │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -145,7 +146,7 @@ The simulator is configured via JSON files. See `config/` for examples:
 
 ## Project Structure
 
-```
+```text
 hydraulics-simulation-system/
 ├── cpp_simulator/
 │   ├── include/           # Header files
