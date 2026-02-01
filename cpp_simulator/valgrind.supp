@@ -1,0 +1,47 @@
+# Valgrind suppression file for Hydraulics Simulator
+# Suppresses known false positives from third-party libraries
+
+# GoogleTest internal allocations
+{
+   gtest_internal
+   Memcheck:Leak
+   ...
+   fun:*testing*internal*
+}
+
+# nlohmann/json allocations (header-only, optimized away in release)
+{
+   nlohmann_json
+   Memcheck:Leak
+   ...
+   fun:*nlohmann*
+}
+
+# Standard library allocations - scoped to libstdc++
+{
+   libstdc++_locale
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:*/libstdc++.so*
+   fun:*std::locale*
+}
+
+{
+   libstdc++_string_pool
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:*/libstdc++.so*
+   fun:*std::basic_string*
+}
+
+# Static initialization in standard library
+{
+   libstdc++_static_init
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   obj:*/libstdc++.so*
+}
