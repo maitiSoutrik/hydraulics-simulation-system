@@ -56,6 +56,7 @@ add_executable(simulator_tests
     tests/test_fill_valve.cpp
     tests/test_relief_valve.cpp
     tests/test_simulator.cpp
+    tests/test_error_handling.cpp
 )
 
 target_link_libraries(simulator_tests
